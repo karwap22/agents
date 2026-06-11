@@ -26,9 +26,9 @@ def fetch_and_summarize():
     mail.select("inbox")
 
     # 1. Generate today's date in IMAP format: DD-Mon-YYYY
-    # today = datetime.now().strftime("%d-%b-%Y")
-    today = "17-Mar-2026"
-    print(today)
+    today = datetime.now().strftime("%d-%b-%Y")
+    # today = "17-Mar-2026"
+    # print(today)
 
     # 2. Search for UNSEEN (Unread) AND emails from TODAY
     # This combines the two criteria
@@ -70,18 +70,20 @@ def fetch_and_summarize():
                     body = msg.get_payload(decode=True).decode(errors='ignore')
 
                 # 3. Summarize with OpenRouter
-                prompt = f"Provide a 1-sentence summary of this email:\nSubject: {subject}\nContent: {body[:1500]}"
-                
-                try:
-                    response = client.chat.completions.create(
-                        model="openrouter/hunter-alpha",
-                        messages=[{"role": "user", "content": prompt}]
-                    )
-                    summary = response.choices[0].message.content
-                    print(f"📌 SUBJECT: {subject}")
-                    print(f"📝 SUMMARY: {summary}\n")
-                except Exception as e:
-                    print(f"Error summarizing email '{subject}': {e}")
+                prompt = f"Provide a short summary of this email:\nSubject: {subject}\nContent: {body[:1500]}"
+                print(subject)
+                print(body)
+                print("="*40)
+                # try:
+                #     response = client.chat.completions.create(
+                #         model="openrouter/hunter-alpha",
+                #         messages=[{"role": "user", "content": prompt}]
+                #     )
+                #     summary = response.choices[0].message.content
+                #     print(f"📌 SUBJECT: {subject}")
+                #     print(f"📝 SUMMARY: {summary}\n")
+                # except Exception as e:
+                #     print(f"Error summarizing email '{subject}': {e}")
 
     mail.logout()
 
