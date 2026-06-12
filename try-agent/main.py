@@ -2,7 +2,7 @@ from dotenv import load_dotenv
 from openai import OpenAI
 import os
 import json
-from tools import calculator,read_file,get_all_files
+from tools import get_all_files
 load_dotenv()
 
 
@@ -16,47 +16,13 @@ client = OpenAI(
 # Tool Registry
 # -----------------------------
 tool_map = {
-    "calculator": calculator,
-    "read_file": read_file,
-    "get_all_files": get_all_files,
+    "get_all_files": get_all_files
 }
 
 # -----------------------------
 # Tool Definitions
 # -----------------------------
 tools = [
-    {
-        "type": "function",
-        "function": {
-            "name": "calculator",
-            "description": "Evaluate a mathematical expression",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "expression": {
-                        "type": "string"
-                    }
-                },
-                "required": ["expression"]
-            }
-        }
-    },
-    {
-        "type": "function",
-        "function": {
-            "name": "read_file",
-            "description": "Read contents of a local text file",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "path": {
-                        "type": "string"
-                    }
-                },
-                "required": ["path"]
-            }
-        }
-    },
     {
         "type": "function",
         "function": {
