@@ -2,7 +2,7 @@ from dotenv import load_dotenv
 from openai import OpenAI
 import os
 import json
-from tools import get_all_files
+from tools import get_all_files,read_file
 load_dotenv()
 
 
@@ -16,7 +16,8 @@ client = OpenAI(
 # Tool Registry
 # -----------------------------
 tool_map = {
-    "get_all_files": get_all_files
+    "get_all_files": get_all_files,
+    "read_file": read_file
 }
 
 # -----------------------------
@@ -31,6 +32,23 @@ tools = [
             "parameters": {
                 "type": "object",
                 
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "read_file",
+            "description": "Read the contents of a file and return its contents.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "file_path": {
+                        "type": "string",
+                        "description": "Path to the file to read."
+                    }
+                },
+                "required": ["file_path"]
             }
         }
     }
@@ -97,10 +115,17 @@ while True:
 
             result = tool_map[tool_name](**args)
 
-            print("Result:", result)
+            # print("Result:", result)
 
             messages.append({
                 "role": "tool",
                 "tool_call_id": tool_call.id,
                 "content": str(result)
             })
+
+from datetime import datetime
+timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+log_entry = f"[{timestamp}] - {messages}"
+with open("messages.txt", "a", encoding="utf-8") as file:
+    file.write(log_entry)
