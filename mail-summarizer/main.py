@@ -24,15 +24,15 @@ def fetch_and_summarize():
     mail = imaplib.IMAP4_SSL("imap.gmail.com")
     mail.login(EMAIL_USER, EMAIL_PASS)
     mail.select("inbox")
-
+    
     # 1. Generate today's date in IMAP format: DD-Mon-YYYY
-    today = datetime.now().strftime("%d-%b-%Y")
-    # today = "17-Mar-2026"
+    # today = datetime.now().strftime("%d-%b-%Y")
+    today = "02-Aug-2026"
     # print(today)
 
     # 2. Search for UNSEEN (Unread) AND emails from TODAY
     # This combines the two criteria
-    search_query = f'(UNSEEN ON {today})'
+    search_query = f'(ON {today})'
     status, messages = mail.search(None, search_query)
     
     email_ids = messages[0].split()
@@ -72,18 +72,18 @@ def fetch_and_summarize():
                 # 3. Summarize with OpenRouter
                 prompt = f"Provide a short summary of this email:\nSubject: {subject}\nContent: {body[:1500]}"
                 print(subject)
-                print(body)
+                # print(body)
                 print("="*40)
-                # try:
-                #     response = client.chat.completions.create(
-                #         model="openrouter/hunter-alpha",
-                #         messages=[{"role": "user", "content": prompt}]
-                #     )
-                #     summary = response.choices[0].message.content
-                #     print(f"📌 SUBJECT: {subject}")
-                #     print(f"📝 SUMMARY: {summary}\n")
-                # except Exception as e:
-                #     print(f"Error summarizing email '{subject}': {e}")
+                try:
+                    response = client.chat.completions.create(
+                        model="nvidia/nemotron-3-ultra-550b-a55b:free",
+                        messages=[{"role": "user", "content": prompt}]
+                    )
+                    summary = response.choices[0].message.content
+                    print(f"📌 SUBJECT: {subject}")
+                    print(f"📝 SUMMARY: {summary}\n")
+                except Exception as e:
+                    print(f"Error summarizing email '{subject}': {e}")
 
     mail.logout()
 
