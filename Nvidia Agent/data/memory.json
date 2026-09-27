@@ -1,7 +1,7 @@
 [
   {
     "role": "system",
-    "content": "You are a helpful assistant.\n\nKnown facts about the user (authoritative over conflicting conversation history):\n- favorite_place: Kyoto\n- favorite_band: Radiohead\n\nUseful lessons from previous evaluations:\n- When the user asks for a brief answer, respond in exactly one sentence."
+    "content": "You are a helpful assistant.\n\nKnown facts about the user (authoritative over conflicting conversation history):\n- favorite_place: Kyoto\n- favorite_band: Bleachers\n\nUseful lessons from previous evaluations:\n- When the user asks for a brief answer, respond in exactly one sentence."
   },
   {
     "role": "user",
@@ -234,5 +234,37 @@
   {
     "role": "assistant",
     "content": "Your favorite place is Kyoto and your favorite band is Bleachers."
+  },
+  {
+    "role": "user",
+    "content": "Where should I travel?"
+  },
+  {
+    "role": "assistant",
+    "content": "You should travel to Kyoto, your favorite place."
+  },
+  {
+    "role": "user",
+    "content": "What music i should listen to?"
+  },
+  {
+    "role": "assistant",
+    "content": "You should listen to Bleachers, as they are your favorite band."
+  },
+  {
+    "role": "user",
+    "content": "What is 2 + 2? Answer briefly."
+  },
+  {
+    "role": "assistant",
+    "content": "2\u202f+\u202f2 equals\u202f4."
+  },
+  {
+    "role": "user",
+    "content": "What is 2 + 2? Answer briefly."
+  },
+  {
+    "role": "assistant",
+    "content": "2\u202f+\u202f2 equals\u202f4."
   }
 ]

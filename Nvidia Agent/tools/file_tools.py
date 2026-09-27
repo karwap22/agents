@@ -12,12 +12,12 @@ def read_text_file(path, trace):
     try:
         target.relative_to(project_root)
     except ValueError:
-        return "Rejected: path is outside the agent folder."
+        return {"ok": False, "tool": "read_file", "result": None, "error": "path is outside the agent folder"}
     if target.suffix.lower() not in READABLE_EXTENSIONS:
-        return "Rejected: file type is not allowed."
+        return {"ok": False, "tool": "read_file", "result": None, "error": "file type is not allowed"}
     if not target.is_file():
-        return "Rejected: file does not exist."
+        return {"ok": False, "tool": "read_file", "result": None, "error": "file does not exist"}
     if target.stat().st_size > MAX_READ_BYTES:
-        return "Rejected: file is too large."
+        return {"ok": False, "tool": "read_file", "result": None, "error": "file is too large"}
     trace("tool_read_completed", {"path": path, "bytes": target.stat().st_size})
-    return target.read_text()
+    return {"ok": True, "tool": "read_file", "result": target.read_text(), "error": None}
