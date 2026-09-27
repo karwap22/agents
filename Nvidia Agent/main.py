@@ -70,11 +70,17 @@ def load_facts():
     try:
         with open(FACTS_FILE) as file:
             stored = json.load(file)
-            return [
-                fact if isinstance(fact, dict) else {"key": "legacy", "value": fact}
-                for fact in stored
-                if isinstance(fact, (dict, str))
-            ]
+            facts = []
+            for fact in stored:
+                if isinstance(fact, str):
+                    fact = {"key": "legacy", "value": fact}
+                if not isinstance(fact, dict):
+                    continue
+                fact.setdefault("source", "user")
+                fact.setdefault("created_at", datetime.now().isoformat(timespec="seconds"))
+                fact.setdefault("updated_at", fact["created_at"])
+                facts.append(fact)
+            return facts
     except FileNotFoundError:
         return []
 
@@ -82,6 +88,28 @@ def load_facts():
 def save_facts(facts):
     with open(FACTS_FILE, "w") as file:
         json.dump(facts, file, indent=2)
+
+
+SENSITIVE_KEYWORDS = {
+    "password", "secret", "token", "api_key", "ssn", "credit_card",
+    "bank", "medical", "health", "passport", "license",
+}
+
+
+def make_fact(key, value, source="user"):
+    timestamp = datetime.now().isoformat(timespec="seconds")
+    return {
+        "key": key,
+        "value": value,
+        "source": source,
+        "created_at": timestamp,
+        "updated_at": timestamp,
+    }
+
+
+def is_sensitive_fact(fact):
+    key = fact["key"].lower()
+    return any(keyword in key for keyword in SENSITIVE_KEYWORDS)
 
 
 def parse_json(text):
@@ -241,7 +269,7 @@ def extract_facts(question):
 def show_memory():
     print("Facts:")
     for fact in facts:
-        print(f"- {fact['key']}: {fact['value']}")
+        print(f"- {fact['key']}: {fact['value']} (updated {fact['updated_at']})")
     print("Lessons:")
     for lesson in lessons:
         print(f"- {lesson}")
@@ -263,6 +291,27 @@ def forget_fact(query):
     print(f"Forgot {removed} fact(s).")
 
 
+def remember_fact(spec):
+    if "=" not in spec:
+        print("Usage: /remember key=value")
+        return
+    key, value = (part.strip() for part in spec.split("=", 1))
+    if not key or not value:
+        print("Usage: /remember key=value")
+        return
+    existing = next((fact for fact in facts if fact["key"] == key), None)
+    if existing is None:
+        facts.append(make_fact(key, value, "explicit_command"))
+        print(f"Fact remembered: {key}")
+    else:
+        existing["value"] = value
+        existing["source"] = "explicit_command"
+        existing["updated_at"] = datetime.now().isoformat(timespec="seconds")
+        print(f"Fact updated: {key}")
+    save_facts(facts)
+    messages[0]["content"] = build_system_content()
+
+
 def clear_history():
     confirmation = input("Type CLEAR to remove conversation history: ")
     if confirmation != "CLEAR":
@@ -272,6 +321,103 @@ def clear_history():
     save_memory(messages)
     trace("conversation_cleared")
     print("Conversation history cleared. Facts and lessons were preserved.")
+
+
+ALLOWED_ACTIONS = {"answer", "memory_lookup", "read_file"}
+
+
+def validate_step(step):
+    if not isinstance(step, dict) or step.get("action") not in ALLOWED_ACTIONS:
+        return None
+    if step["action"] == "read_file" and not isinstance(step.get("path"), str):
+        return None
+    return step
+
+
+def create_plan(question):
+    if re.search(r"\b(read|open|inspect)\b", question.lower()) and re.search(
+        r"\b(summarize|summary|explain)\b", question.lower()
+    ):
+        path_match = re.search(r"(?:read|open|inspect)\s+([^\s]+)", question, re.IGNORECASE)
+        if path_match:
+            plan = {
+                "steps": [
+                    {"action": "read_file", "path": path_match.group(1)},
+                    {"action": "answer"},
+                ]
+            }
+            trace("plan_created", {"actions": ["read_file", "answer"]})
+            return plan
+    completion = client.chat.completions.create(
+        model="nvidia/nemotron-3-super-120b-a12b",
+        messages=[
+            {
+                "role": "system",
+                "content": (
+                    "Choose one action or a short sequence of up to three actions. "
+                    "Return valid JSON only. Allowed actions: answer, memory_lookup, "
+                    'read_file. A sequence uses {"steps": [{"action": "..."}]}. '
+                    'Use {"action": "read_file", "path": "..."} only when a file is needed. '
+                    "For a request to read a file and summarize it, use read_file "
+                    "followed by answer. Never choose writes, shell commands, or unknown actions."
+                ),
+            },
+            {"role": "user", "content": question},
+        ],
+        temperature=0,
+        max_tokens=100,
+    )
+    plan = parse_json(completion.choices[0].message.content)
+    if not isinstance(plan, dict):
+        plan = {"action": "answer"}
+    elif isinstance(plan.get("steps"), list):
+        steps = [validate_step(step) for step in plan["steps"][:3]]
+        plan = {"steps": steps} if steps and all(steps) else {"action": "answer"}
+    else:
+        plan = validate_step(plan) or {"action": "answer"}
+    if "steps" in plan and len(plan["steps"]) > 3:
+        plan = {"action": "answer"}
+    trace("plan_created", {"actions": [step["action"] for step in plan.get("steps", [plan])]})
+    return plan
+
+
+def save_local_answer(question, answer):
+    messages.append({"role": "user", "content": question})
+    messages.append({"role": "assistant", "content": answer})
+    save_memory(messages)
+    trace("memory_saved")
+
+
+def execute_plan(question, plan):
+    steps = plan.get("steps", [plan])
+    trace("plan_execution_started", {"steps": len(steps)})
+    tool_result = None
+    for index, step in enumerate(steps, start=1):
+        action = step["action"]
+        trace("plan_step_started", {"index": index, "action": action})
+        if action == "answer":
+            prompt = question
+            if tool_result is not None:
+                prompt += f"\n\nRead-only tool result:\n{tool_result}"
+            answer = ask_agent(prompt)
+            trace("plan_step_completed", {"index": index, "action": action})
+            return answer
+        if action == "memory_lookup":
+            broad_lookup = any(
+                word in question.lower() for word in ("what do you remember", "saved memories", "lessons")
+            )
+            selected = facts if broad_lookup else relevant_facts(question)
+            lines = [f"- {fact['key']}: {fact['value']}" for fact in selected]
+            if broad_lookup:
+                lines.extend(f"- lesson: {lesson}" for lesson in lessons)
+            tool_result = "\n".join(lines) if lines else "I do not have any matching memories."
+        else:
+            tool_result = read_text_file(step["path"], trace)
+        trace("plan_step_completed", {"index": index, "action": action})
+    answer = tool_result or "The plan produced no result."
+    save_local_answer(question, answer)
+    trace("plan_execution_completed", {"steps": len(steps)})
+    return answer
 
 
 def ask_agent(question):
@@ -303,14 +449,19 @@ def ask_agent(question):
         trace("revision_completed", {"performed": False})
     added_facts = []
     for fact in extract_facts(question):
+        if is_sensitive_fact(fact):
+            print(f"Sensitive fact not saved automatically: {fact['key']}. Use /remember to save it explicitly.")
+            continue
         existing = next((item for item in facts if item["key"] == fact["key"]), None)
         if existing is None:
-            facts.append(fact)
+            facts.append(make_fact(fact["key"], fact["value"]))
             added_facts.append(fact["key"])
             print(f"Fact saved: {fact['key']} = {fact['value']}")
         elif existing["value"] != fact["value"]:
             print(f"Fact updated: {fact['key']} = {fact['value']}")
             existing["value"] = fact["value"]
+            existing["updated_at"] = datetime.now().isoformat(timespec="seconds")
+            existing["source"] = "user"
             added_facts.append(fact["key"])
     trace("fact_extraction_completed", {"keys": added_facts})
     if facts:
@@ -333,6 +484,10 @@ while True:
     if question == "/clear-history":
         clear_history()
         continue
+    if question.startswith("/plan"):
+        request = question[len("/plan") :].strip()
+        print(json.dumps(create_plan(request), indent=2) if request else "Usage: /plan <request>")
+        continue
     if question.startswith("/read"):
         path = question[len("/read") :].strip()
         print(read_text_file(path, trace) if path else "Usage: /read <relative text-file path>")
@@ -340,4 +495,8 @@ while True:
     if question.startswith("/forget"):
         forget_fact(question[len("/forget") :].strip())
         continue
-    print(f"Agent: {ask_agent(question)}")
+    if question.startswith("/remember"):
+        remember_fact(question[len("/remember") :].strip())
+        continue
+    plan = create_plan(question)
+    print(f"Agent: {execute_plan(question, plan)}")
