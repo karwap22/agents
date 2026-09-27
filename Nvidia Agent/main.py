@@ -1,9 +1,11 @@
 import json
 import re
 from datetime import datetime
+from pathlib import Path
 from openai import OpenAI
 from dotenv import load_dotenv
 from os import getenv
+from tools.file_tools import read_text_file
 
 load_dotenv()
 
@@ -12,13 +14,16 @@ client = OpenAI(
     api_key=getenv("API"),
 )
 
-MEMORY_FILE = "memory.json"
-LESSONS_FILE = "lessons.json"
-FACTS_FILE = "facts.json"
-TRACE_FILE = "trace.jsonl"
 TRACE_ENABLED = getenv("TRACE", "1") == "1"
 MAX_RECENT_MESSAGES = 10
 SYSTEM_MESSAGE = {"role": "system", "content": "You are a helpful assistant."}
+PROJECT_ROOT = Path(__file__).resolve().parent
+DATA_DIR = PROJECT_ROOT / "data"
+DATA_DIR.mkdir(exist_ok=True)
+MEMORY_FILE = DATA_DIR / "memory.json"
+LESSONS_FILE = DATA_DIR / "lessons.json"
+FACTS_FILE = DATA_DIR / "facts.json"
+TRACE_FILE = DATA_DIR / "trace.jsonl"
 
 
 def trace(step, details=None):
@@ -258,6 +263,17 @@ def forget_fact(query):
     print(f"Forgot {removed} fact(s).")
 
 
+def clear_history():
+    confirmation = input("Type CLEAR to remove conversation history: ")
+    if confirmation != "CLEAR":
+        print("History was not cleared.")
+        return
+    messages[:] = [{"role": "system", "content": build_system_content()}]
+    save_memory(messages)
+    trace("conversation_cleared")
+    print("Conversation history cleared. Facts and lessons were preserved.")
+
+
 def ask_agent(question):
     trace("input_received", {"length": len(question)})
     messages.append({"role": "user", "content": question})
@@ -313,6 +329,13 @@ while True:
         break
     if question == "/memory":
         show_memory()
+        continue
+    if question == "/clear-history":
+        clear_history()
+        continue
+    if question.startswith("/read"):
+        path = question[len("/read") :].strip()
+        print(read_text_file(path, trace) if path else "Usage: /read <relative text-file path>")
         continue
     if question.startswith("/forget"):
         forget_fact(question[len("/forget") :].strip())
