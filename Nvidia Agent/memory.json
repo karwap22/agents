@@ -1,7 +1,7 @@
 [
   {
     "role": "system",
-    "content": "You are a helpful assistant.\n\nUseful lessons from previous evaluations:\n- When the user asks for a brief answer, respond in exactly one sentence."
+    "content": "You are a helpful assistant.\n\nKnown facts about the user (authoritative over conflicting conversation history):\n- favorite_place: Kyoto\n\nUseful lessons from previous evaluations:\n- When the user asks for a brief answer, respond in exactly one sentence."
   },
   {
     "role": "user",
@@ -66,5 +66,77 @@
   {
     "role": "assistant",
     "content": "Your favorite place is Kamakura."
+  },
+  {
+    "role": "user",
+    "content": "my favourite place is tokyo"
+  },
+  {
+    "role": "assistant",
+    "content": "Your favorite place is Tokyo."
+  },
+  {
+    "role": "user",
+    "content": "what is my favourite place"
+  },
+  {
+    "role": "assistant",
+    "content": "Your favorite place is Tokyo."
+  },
+  {
+    "role": "user",
+    "content": "My favorite place is Kyoto."
+  },
+  {
+    "role": "assistant",
+    "content": "Your favorite place is Kyoto."
+  },
+  {
+    "role": "user",
+    "content": "my favourite place is India"
+  },
+  {
+    "role": "assistant",
+    "content": "Your favorite place is India."
+  },
+  {
+    "role": "user",
+    "content": "What is my favorite place?"
+  },
+  {
+    "role": "assistant",
+    "content": "Your favorite place is India."
+  },
+  {
+    "role": "user",
+    "content": "What is my favorite place?"
+  },
+  {
+    "role": "assistant",
+    "content": "Your favorite place is India."
+  },
+  {
+    "role": "user",
+    "content": "What is my favorite place?"
+  },
+  {
+    "role": "assistant",
+    "content": "Your favorite place is India."
+  },
+  {
+    "role": "user",
+    "content": "What is my favorite place?"
+  },
+  {
+    "role": "assistant",
+    "content": "Your favorite place is India."
+  },
+  {
+    "role": "user",
+    "content": "What is my favorite place?"
+  },
+  {
+    "role": "assistant",
+    "content": "Your favorite place is Kyoto."
   }
 ]
