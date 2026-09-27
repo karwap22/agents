@@ -8,6 +8,7 @@ DATA_DIR.mkdir(exist_ok=True)
 
 MEMORY_FILE = DATA_DIR / "memory.json"
 LESSONS_FILE = DATA_DIR / "lessons.json"
+CANDIDATES_FILE = DATA_DIR / "candidate_lessons.json"
 FACTS_FILE = DATA_DIR / "facts.json"
 TRACE_FILE = DATA_DIR / "trace.jsonl"
 TRACE_ENABLED = os.getenv("TRACE", "1") == "1"

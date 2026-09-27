@@ -220,3 +220,29 @@
 {"time": "2026-09-27T23:38:27", "step": "fact_extraction_completed", "keys": []}
 {"time": "2026-09-27T23:38:27", "step": "memory_saved"}
 {"time": "2026-09-27T23:38:27", "step": "plan_step_completed", "index": 1, "action": "answer"}
+{"time": "2026-09-27T23:45:32", "step": "plan_created", "actions": ["memory_lookup"]}
+{"time": "2026-09-27T23:45:32", "step": "plan_execution_started", "steps": 1}
+{"time": "2026-09-27T23:45:32", "step": "plan_step_started", "index": 1, "action": "memory_lookup"}
+{"time": "2026-09-27T23:45:32", "step": "plan_step_completed", "index": 1, "action": "memory_lookup"}
+{"time": "2026-09-27T23:45:32", "step": "memory_saved"}
+{"time": "2026-09-27T23:45:32", "step": "plan_execution_completed", "steps": 1}
+{"time": "2026-09-27T23:45:45", "step": "plan_created", "actions": ["answer"]}
+{"time": "2026-09-27T23:45:45", "step": "plan_execution_started", "steps": 1}
+{"time": "2026-09-27T23:45:45", "step": "plan_step_started", "index": 1, "action": "answer"}
+{"time": "2026-09-27T23:45:45", "step": "input_received", "length": 12}
+{"time": "2026-09-27T23:45:46", "step": "semantic_lookup", "keys": []}
+{"time": "2026-09-27T23:45:46", "step": "facts_selected", "keys": []}
+{"time": "2026-09-27T23:45:46", "step": "context_built", "message_count": 12}
+{"time": "2026-09-27T23:45:47", "step": "draft_completed", "length": 10}
+{"time": "2026-09-27T23:45:54", "step": "review_completed", "lesson_found": false}
+{"time": "2026-09-27T23:45:54", "step": "revision_completed", "performed": false}
+{"time": "2026-09-27T23:45:58", "step": "fact_extraction_completed", "keys": []}
+{"time": "2026-09-27T23:45:58", "step": "memory_saved"}
+{"time": "2026-09-27T23:45:58", "step": "plan_step_completed", "index": 1, "action": "answer"}
+{"time": "2026-09-28T01:56:34", "step": "tool_search_text_requested", "path": "data/facts.json"}
+{"time": "2026-09-28T01:56:34", "step": "tool_search_text_completed", "path": "data/facts.json", "match_count": 1}
+{"time": "2026-09-28T01:56:34", "step": "tool_search_text_requested", "path": ".env"}
+{"time": "2026-09-28T02:02:40", "step": "tool_search_text_requested", "path": "data/facts.json"}
+{"time": "2026-09-28T02:02:40", "step": "tool_search_text_completed", "path": "data/facts.json", "match_count": 1}
+{"time": "2026-09-28T02:02:40", "step": "tool_read_requested", "path": "data/facts.json"}
+{"time": "2026-09-28T02:02:40", "step": "tool_read_completed", "path": "data/facts.json", "bytes": 331}

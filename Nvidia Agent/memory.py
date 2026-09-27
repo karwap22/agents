@@ -2,7 +2,7 @@ import json
 import re
 from datetime import datetime
 
-from config import FACTS_FILE, LESSONS_FILE, MAX_RECENT_MESSAGES, MEMORY_FILE
+from config import CANDIDATES_FILE, FACTS_FILE, LESSONS_FILE, MAX_RECENT_MESSAGES, MEMORY_FILE
 from llm import call_model
 from tracing import trace
 
@@ -17,6 +17,7 @@ SENSITIVE_KEYWORDS = {
 class Memory:
     def __init__(self):
         self.lessons = self._load_lessons()
+        self.candidates = self._load_candidates()
         self.facts = self._load_facts()
         self.messages = self._load_messages()
         self.save_facts()
@@ -35,6 +36,9 @@ class Memory:
 
     def _load_lessons(self):
         return self._load_json(LESSONS_FILE, [])
+
+    def _load_candidates(self):
+        return self._load_json(CANDIDATES_FILE, [])
 
     def _load_facts(self):
         stored = self._load_json(FACTS_FILE, [])
@@ -57,6 +61,10 @@ class Memory:
     def save_lessons(self):
         with open(LESSONS_FILE, "w") as file:
             json.dump(self.lessons, file, indent=2)
+
+    def save_candidates(self):
+        with open(CANDIDATES_FILE, "w") as file:
+            json.dump(self.candidates, file, indent=2)
 
     def save_facts(self):
         with open(FACTS_FILE, "w") as file:

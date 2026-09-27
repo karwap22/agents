@@ -266,5 +266,21 @@
   {
     "role": "assistant",
     "content": "2\u202f+\u202f2 equals\u202f4."
+  },
+  {
+    "role": "user",
+    "content": "What is my favourite place?"
+  },
+  {
+    "role": "assistant",
+    "content": "- favorite_place: Kyoto"
+  },
+  {
+    "role": "user",
+    "content": "Whta is 2+2?"
+  },
+  {
+    "role": "assistant",
+    "content": "2\u202f+\u202f2\u202f=\u202f4."
   }
 ]

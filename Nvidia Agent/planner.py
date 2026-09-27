@@ -3,15 +3,18 @@ import re
 from llm import call_model
 from tracing import trace
 from utils import parse_json
+from tools.registry import tool_catalog
 
 
-ALLOWED_ACTIONS = {"answer", "memory_lookup", "read_file"}
+ALLOWED_ACTIONS = {"answer", "memory_lookup", "read_file", "search_text"}
 
 
 def validate_step(step):
     if not isinstance(step, dict) or step.get("action") not in ALLOWED_ACTIONS:
         return None
     if step["action"] == "read_file" and not isinstance(step.get("path"), str):
+        return None
+    if step["action"] == "search_text" and not all(isinstance(step.get(key), str) for key in ("path", "query")):
         return None
     return step
 
@@ -25,7 +28,7 @@ def create_plan(question):
             return plan
     response = call_model(
         [
-            {"role": "system", "content": "Choose one action or up to three steps. Return JSON only. Allowed actions: answer, memory_lookup, read_file. Never choose writes, shell commands, or unknown actions."},
+            {"role": "system", "content": f"Choose one action or up to three steps. Return JSON only. Allowed actions: answer, memory_lookup, or one of these tools: {tool_catalog()}. Never choose writes, shell commands, or unknown actions."},
             {"role": "user", "content": question},
         ],
         temperature=0,

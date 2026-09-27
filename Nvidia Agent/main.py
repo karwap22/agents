@@ -3,7 +3,7 @@ import json
 from agent import Agent
 from memory import Memory
 from planner import create_plan
-from tools.file_tools import read_text_file
+from tools.registry import execute_tool
 from tracing import trace
 
 
@@ -18,6 +18,14 @@ def show_memory():
     print("Lessons:")
     for lesson in memory.lessons:
         print(f"- {lesson}")
+
+
+def show_candidates():
+    print("Candidate lessons:")
+    for candidate in memory.candidates:
+        print(f"- {candidate}")
+    if not memory.candidates:
+        print("(none)")
 
 
 def forget_fact(query):
@@ -100,7 +108,8 @@ def execute_plan(question, plan):
                 "error": None,
             }
         else:
-            tool_result = read_text_file(step["path"], trace)
+            arguments = {key: value for key, value in step.items() if key != "action"}
+            tool_result = execute_tool(action, arguments, trace)
         trace("plan_step_completed", {"index": index, "action": action})
     answer = (
         tool_result["result"] if tool_result and tool_result["ok"]
@@ -120,6 +129,9 @@ while True:
     if question == "/memory":
         show_memory()
         continue
+    if question == "/candidates":
+        show_candidates()
+        continue
     if question == "/clear-history":
         clear_history()
         continue
@@ -132,9 +144,18 @@ while True:
         if not path:
             print("Usage: /read <relative text-file path>")
         else:
-            result = read_text_file(path, trace)
+            result = execute_tool("read_file", {"path": path}, trace)
             print(result["result"] if result["ok"] else f"Rejected: {result['error']}")
         continue
+    if question == "/search" or question.startswith("/search "):
+        parts = question.split(maxsplit=2)
+        if len(parts) < 3:
+            print("Usage: /search <relative text-file path> <query>")
+        else:
+            result = execute_tool("search_text", {"path": parts[1], "query": parts[2]}, trace)
+            print(result["result"] if result["ok"] else f"Rejected: {result['error']}")
+        continue
+
     if question.startswith("/forget"):
         forget_fact(question[len("/forget") :].strip())
         continue

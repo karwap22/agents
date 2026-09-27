@@ -68,10 +68,10 @@ class Agent:
         lesson = self.review_answer(question, answer)
         trace("review_completed", {"lesson_found": lesson is not None})
         if lesson is not None:
-            if lesson not in self.memory.lessons:
-                self.memory.lessons.append(lesson)
-            self.memory.save_lessons()
-            print(f"Lesson saved: {lesson}")
+            if lesson not in self.memory.lessons and lesson not in self.memory.candidates:
+                self.memory.candidates.append(lesson)
+                self.memory.save_candidates()
+                print(f"Candidate lesson saved: {lesson}")
             answer = self.revise_answer(question, answer, lesson)
             trace("revision_completed", {"performed": True, "length": len(answer)})
         else:
