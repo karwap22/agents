@@ -1,0 +1,16 @@
+[
+  {
+    "key": "favorite_place",
+    "value": "Kyoto",
+    "source": "user",
+    "created_at": "2026-09-27T19:52:40",
+    "updated_at": "2026-09-27T19:52:40"
+  },
+  {
+    "key": "favorite_band",
+    "value": "Bleachers",
+    "source": "user",
+    "created_at": "2026-09-27T19:52:40",
+    "updated_at": "2026-09-27T19:52:40"
+  }
+]
