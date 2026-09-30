@@ -1,0 +1,223 @@
+{"time": "2026-09-30T21:57:13", "step": "agent_started"}
+{"time": "2026-09-30T21:57:35", "step": "user_input_received", "length": 40}
+{"time": "2026-09-30T21:57:35", "step": "model_request_started", "messages": 2}
+{"time": "2026-09-30T21:57:39", "step": "tool_requested", "tool": "list_schemas"}
+{"time": "2026-09-30T21:57:39", "step": "postgres_query_started"}
+{"time": "2026-09-30T21:57:39", "step": "postgres_query_completed", "rows": 1}
+{"time": "2026-09-30T21:57:39", "step": "tool_completed", "tool": "list_schemas"}
+{"time": "2026-09-30T21:57:39", "step": "model_request_started", "messages": 4}
+{"time": "2026-09-30T21:57:40", "step": "agent_response_completed", "length": 56}
+{"time": "2026-09-30T21:59:34", "step": "agent_started"}
+{"time": "2026-09-30T21:59:45", "step": "user_input_received", "length": 27}
+{"time": "2026-09-30T21:59:45", "step": "model_request_started", "messages": 2}
+{"time": "2026-09-30T21:59:49", "step": "tool_requested", "tool": "list_schemas", "arguments": {}}
+{"time": "2026-09-30T21:59:49", "step": "postgres_query_started"}
+{"time": "2026-09-30T21:59:49", "step": "postgres_query_completed", "rows": 1}
+{"time": "2026-09-30T21:59:49", "step": "tool_completed", "tool": "list_schemas"}
+{"time": "2026-09-30T21:59:49", "step": "model_request_started", "messages": 4}
+{"time": "2026-09-30T21:59:50", "step": "agent_response_completed", "length": 34}
+{"time": "2026-09-30T22:01:28", "step": "agent_started"}
+{"time": "2026-09-30T22:02:02", "step": "user_input_received", "length": 26}
+{"time": "2026-09-30T22:02:02", "step": "model_request_started", "messages": 2}
+{"time": "2026-09-30T22:02:07", "step": "model_response_received", "duration_ms": 5487, "tool_calls": 1}
+{"time": "2026-09-30T22:02:07", "step": "tool_requested", "tool": "trace_action", "arguments": {"action": "list_schemas", "reason": "to list existing schemas in the database"}}
+{"time": "2026-09-30T22:02:07", "step": "llm_decision", "action": "list_schemas", "reason": "to list existing schemas in the database"}
+{"time": "2026-09-30T22:02:07", "step": "tool_completed", "tool": "trace_action", "duration_ms": 0}
+{"time": "2026-09-30T22:02:07", "step": "model_request_started", "messages": 4}
+{"time": "2026-09-30T22:02:08", "step": "model_response_received", "duration_ms": 925, "tool_calls": 1}
+{"time": "2026-09-30T22:02:08", "step": "tool_requested", "tool": "list_schemas", "arguments": {}}
+{"time": "2026-09-30T22:02:08", "step": "postgres_query_started"}
+{"time": "2026-09-30T22:02:08", "step": "postgres_query_completed", "rows": 1}
+{"time": "2026-09-30T22:02:08", "step": "tool_completed", "tool": "list_schemas", "duration_ms": 237}
+{"time": "2026-09-30T22:02:08", "step": "model_request_started", "messages": 6}
+{"time": "2026-09-30T22:02:09", "step": "model_response_received", "duration_ms": 1056, "tool_calls": 0}
+{"time": "2026-09-30T22:02:09", "step": "agent_response_completed", "length": 52}
+{"time": "2026-09-30T22:03:48", "step": "user_input_received", "length": 39}
+{"time": "2026-09-30T22:03:48", "step": "model_request_started", "messages": 8}
+{"time": "2026-09-30T22:03:51", "step": "model_response_received", "duration_ms": 3695, "tool_calls": 1}
+{"time": "2026-09-30T22:03:51", "step": "tool_requested", "tool": "trace_action", "arguments": {"reason": "to list tables in the public schema", "action": "list_tables"}}
+{"time": "2026-09-30T22:03:51", "step": "llm_decision", "action": "list_tables", "reason": "to list tables in the public schema"}
+{"time": "2026-09-30T22:03:51", "step": "tool_completed", "tool": "trace_action", "duration_ms": 0}
+{"time": "2026-09-30T22:03:51", "step": "model_request_started", "messages": 10}
+{"time": "2026-09-30T22:03:53", "step": "model_response_received", "duration_ms": 1422, "tool_calls": 1}
+{"time": "2026-09-30T22:03:53", "step": "tool_requested", "tool": "list_tables", "arguments": {"schema": "public"}}
+{"time": "2026-09-30T22:03:53", "step": "postgres_query_started"}
+{"time": "2026-09-30T22:03:53", "step": "postgres_query_completed", "rows": 0}
+{"time": "2026-09-30T22:03:53", "step": "tool_completed", "tool": "list_tables", "duration_ms": 275}
+{"time": "2026-09-30T22:03:53", "step": "model_request_started", "messages": 12}
+{"time": "2026-09-30T22:03:58", "step": "model_response_received", "duration_ms": 4538, "tool_calls": 0}
+{"time": "2026-09-30T22:03:58", "step": "agent_response_completed", "length": 53}
+{"time": "2026-09-30T22:08:13", "step": "user_input_received", "length": 28}
+{"time": "2026-09-30T22:08:13", "step": "model_request_started", "messages": 14}
+{"time": "2026-09-30T22:08:15", "step": "model_response_received", "duration_ms": 1439, "tool_calls": 0}
+{"time": "2026-09-30T22:08:15", "step": "agent_response_completed", "length": 52}
+{"time": "2026-09-30T22:08:26", "step": "user_input_received", "length": 17}
+{"time": "2026-09-30T22:08:26", "step": "model_request_started", "messages": 16}
+{"time": "2026-09-30T22:08:29", "step": "model_response_received", "duration_ms": 2920, "tool_calls": 1}
+{"time": "2026-09-30T22:08:29", "step": "tool_requested", "tool": "trace_action", "arguments": {"action": "list_schemas", "reason": "Check for any schemas including demo"}}
+{"time": "2026-09-30T22:08:29", "step": "llm_decision", "action": "list_schemas", "reason": "Check for any schemas including demo"}
+{"time": "2026-09-30T22:08:29", "step": "tool_completed", "tool": "trace_action", "duration_ms": 0}
+{"time": "2026-09-30T22:08:29", "step": "model_request_started", "messages": 18}
+{"time": "2026-09-30T22:08:36", "step": "model_response_received", "duration_ms": 6928, "tool_calls": 1}
+{"time": "2026-09-30T22:08:36", "step": "tool_requested", "tool": "list_schemas", "arguments": {}}
+{"time": "2026-09-30T22:08:36", "step": "postgres_query_started"}
+{"time": "2026-09-30T22:08:36", "step": "postgres_query_completed", "rows": 1}
+{"time": "2026-09-30T22:08:36", "step": "tool_completed", "tool": "list_schemas", "duration_ms": 219}
+{"time": "2026-09-30T22:08:36", "step": "model_request_started", "messages": 20}
+{"time": "2026-09-30T22:08:38", "step": "model_response_received", "duration_ms": 2090, "tool_calls": 0}
+{"time": "2026-09-30T22:08:38", "step": "agent_response_completed", "length": 255}
+{"time": "2026-09-30T22:09:39", "step": "agent_started"}
+{"time": "2026-09-30T22:09:44", "step": "user_input_received", "length": 13}
+{"time": "2026-09-30T22:09:44", "step": "model_request_started", "messages": 2}
+{"time": "2026-09-30T22:09:47", "step": "model_response_received", "duration_ms": 3217, "tool_calls": 1}
+{"time": "2026-09-30T22:09:47", "step": "tool_requested", "tool": "trace_action", "arguments": {"reason": "User wants to see the schemas in the database.", "action": "list_schemas"}}
+{"time": "2026-09-30T22:09:47", "step": "llm_decision", "action": "list_schemas", "reason": "User wants to see the schemas in the database."}
+{"time": "2026-09-30T22:09:47", "step": "tool_completed", "tool": "trace_action", "duration_ms": 0}
+{"time": "2026-09-30T22:09:47", "step": "model_request_started", "messages": 4}
+{"time": "2026-09-30T22:09:49", "step": "model_response_received", "duration_ms": 2103, "tool_calls": 1}
+{"time": "2026-09-30T22:09:49", "step": "tool_requested", "tool": "list_schemas", "arguments": {}}
+{"time": "2026-09-30T22:09:49", "step": "postgres_query_started"}
+{"time": "2026-09-30T22:09:50", "step": "postgres_query_completed", "rows": 1}
+{"time": "2026-09-30T22:09:50", "step": "tool_completed", "tool": "list_schemas", "duration_ms": 567}
+{"time": "2026-09-30T22:09:50", "step": "model_request_started", "messages": 6}
+{"time": "2026-09-30T22:09:51", "step": "model_response_received", "duration_ms": 808, "tool_calls": 0}
+{"time": "2026-09-30T22:09:51", "step": "agent_response_completed", "length": 57}
+{"time": "2026-09-30T22:15:08", "step": "agent_started"}
+{"time": "2026-09-30T22:15:14", "step": "user_input_received", "length": 31}
+{"time": "2026-09-30T22:15:14", "step": "model_request_started", "messages": 2, "tool_choice": "required"}
+{"time": "2026-09-30T22:15:17", "step": "model_response_received", "duration_ms": 2474, "tool_calls": 0}
+{"time": "2026-09-30T22:15:17", "step": "agent_response_completed", "length": 52}
+{"time": "2026-09-30T22:23:44", "step": "agent_started"}
+{"time": "2026-09-30T22:23:54", "step": "user_input_received", "length": 13}
+{"time": "2026-09-30T22:23:54", "step": "model_request_started", "messages": 2}
+{"time": "2026-09-30T22:23:56", "step": "model_response_received", "duration_ms": 1811, "tool_calls": 1}
+{"time": "2026-09-30T22:23:56", "step": "tool_requested", "tool": "trace_action", "arguments": {"action": "list_schemas", "reason": "User asked to show schemas"}}
+{"time": "2026-09-30T22:23:56", "step": "llm_decision", "action": "list_schemas", "reason": "User asked to show schemas"}
+{"time": "2026-09-30T22:23:56", "step": "tool_completed", "tool": "trace_action", "duration_ms": 0}
+{"time": "2026-09-30T22:23:56", "step": "model_request_started", "messages": 4}
+{"time": "2026-09-30T22:23:57", "step": "model_response_received", "duration_ms": 1401, "tool_calls": 1}
+{"time": "2026-09-30T22:23:57", "step": "tool_requested", "tool": "list_schemas", "arguments": {}}
+{"time": "2026-09-30T22:23:57", "step": "postgres_query_started"}
+{"time": "2026-09-30T22:23:58", "step": "postgres_query_completed", "rows": 1}
+{"time": "2026-09-30T22:23:58", "step": "tool_completed", "tool": "list_schemas", "duration_ms": 375}
+{"time": "2026-09-30T22:23:58", "step": "model_request_started", "messages": 6}
+{"time": "2026-09-30T22:23:59", "step": "model_response_received", "duration_ms": 1370, "tool_calls": 0}
+{"time": "2026-09-30T22:23:59", "step": "agent_response_completed", "length": 45}
+{"time": "2026-09-30T22:28:14", "step": "user_input_received", "length": 13}
+{"time": "2026-09-30T22:28:14", "step": "model_request_started", "messages": 8}
+{"time": "2026-09-30T22:28:16", "step": "model_response_received", "duration_ms": 2597, "tool_calls": 1}
+{"time": "2026-09-30T22:28:16", "step": "tool_requested", "tool": "trace_action", "arguments": {"reason": "User repeated request to show schemas", "action": "list_schemas"}}
+{"time": "2026-09-30T22:28:16", "step": "llm_decision", "action": "list_schemas", "reason": "User repeated request to show schemas"}
+{"time": "2026-09-30T22:28:16", "step": "tool_completed", "tool": "trace_action", "duration_ms": 2}
+{"time": "2026-09-30T22:28:16", "step": "model_request_started", "messages": 10}
+{"time": "2026-09-30T22:28:17", "step": "model_response_received", "duration_ms": 561, "tool_calls": 1}
+{"time": "2026-09-30T22:28:17", "step": "tool_requested", "tool": "list_schemas", "arguments": {}}
+{"time": "2026-09-30T22:28:17", "step": "postgres_query_started"}
+{"time": "2026-09-30T22:28:17", "step": "postgres_query_completed", "rows": 2}
+{"time": "2026-09-30T22:28:17", "step": "tool_completed", "tool": "list_schemas", "duration_ms": 331}
+{"time": "2026-09-30T22:28:17", "step": "model_request_started", "messages": 12}
+{"time": "2026-09-30T22:28:18", "step": "model_response_received", "duration_ms": 938, "tool_calls": 0}
+{"time": "2026-09-30T22:28:18", "step": "agent_response_completed", "length": 68}
+{"time": "2026-09-30T22:28:27", "step": "user_input_received", "length": 26}
+{"time": "2026-09-30T22:28:27", "step": "model_request_started", "messages": 14}
+{"time": "2026-09-30T22:28:28", "step": "model_response_received", "duration_ms": 770, "tool_calls": 1}
+{"time": "2026-09-30T22:28:28", "step": "tool_requested", "tool": "trace_action", "arguments": {"reason": "User asked to show tables in schema demo", "action": "list_tables"}}
+{"time": "2026-09-30T22:28:28", "step": "llm_decision", "action": "list_tables", "reason": "User asked to show tables in schema demo"}
+{"time": "2026-09-30T22:28:28", "step": "tool_completed", "tool": "trace_action", "duration_ms": 0}
+{"time": "2026-09-30T22:28:28", "step": "model_request_started", "messages": 16}
+{"time": "2026-09-30T22:28:32", "step": "model_response_received", "duration_ms": 4743, "tool_calls": 1}
+{"time": "2026-09-30T22:28:32", "step": "tool_requested", "tool": "list_tables", "arguments": {"schema": "demo"}}
+{"time": "2026-09-30T22:28:32", "step": "postgres_query_started"}
+{"time": "2026-09-30T22:28:32", "step": "postgres_query_completed", "rows": 2}
+{"time": "2026-09-30T22:28:32", "step": "tool_completed", "tool": "list_tables", "duration_ms": 119}
+{"time": "2026-09-30T22:28:32", "step": "model_request_started", "messages": 18}
+{"time": "2026-09-30T22:28:33", "step": "model_response_received", "duration_ms": 796, "tool_calls": 0}
+{"time": "2026-09-30T22:28:33", "step": "agent_response_completed", "length": 144}
+{"time": "2026-09-30T22:54:58", "step": "read_only_query_validated", "sql_length": 42, "max_rows": 200}
+{"time": "2026-09-30T22:54:58", "step": "postgres_query_started", "sql_length": 84, "timeout_seconds": 10}
+{"time": "2026-09-30T22:58:33", "step": "read_only_query_validated", "sql_length": 42, "max_rows": 200}
+{"time": "2026-09-30T22:58:33", "step": "postgres_query_started", "sql_length": 84, "timeout_seconds": 10}
+{"time": "2026-09-30T22:58:36", "step": "postgres_query_completed", "rows": 1}
+{"time": "2026-09-30T23:02:14", "step": "user_input_received", "length": 34}
+{"time": "2026-09-30T23:02:14", "step": "model_request_started", "messages": 20}
+{"time": "2026-09-30T23:02:20", "step": "model_response_received", "duration_ms": 5675, "tool_calls": 1}
+{"time": "2026-09-30T23:02:20", "step": "tool_requested", "tool": "trace_action", "arguments": {"action": "create_semantic_view", "reason": "Create semantic view to get count of orders in demo.orders"}}
+{"time": "2026-09-30T23:02:20", "step": "llm_decision", "action": "create_semantic_view", "reason": "Create semantic view to get count of orders in demo.orders"}
+{"time": "2026-09-30T23:02:20", "step": "tool_completed", "tool": "trace_action", "duration_ms": 1}
+{"time": "2026-09-30T23:02:20", "step": "model_request_started", "messages": 22}
+{"time": "2026-09-30T23:02:22", "step": "model_response_received", "duration_ms": 2101, "tool_calls": 1}
+{"time": "2026-09-30T23:02:22", "step": "tool_requested", "tool": "create_semantic_view", "arguments": {"request": "count of orders", "schema": "demo", "tables": ["orders"]}}
+{"time": "2026-09-30T23:02:22", "step": "semantic_generation_started", "tables": 1, "request_length": 15}
+{"time": "2026-09-30T23:02:22", "step": "postgres_query_started"}
+{"time": "2026-09-30T23:02:23", "step": "postgres_query_completed", "rows": 6}
+{"time": "2026-09-30T23:02:23", "step": "postgres_query_started"}
+{"time": "2026-09-30T23:02:23", "step": "postgres_query_completed", "rows": 0}
+{"time": "2026-09-30T23:02:23", "step": "postgres_query_started"}
+{"time": "2026-09-30T23:02:23", "step": "postgres_query_completed", "rows": 0}
+{"time": "2026-09-30T23:02:28", "step": "semantic_generation_completed", "views": 1}
+{"time": "2026-09-30T23:02:28", "step": "tool_completed", "tool": "create_semantic_view", "duration_ms": 6049}
+{"time": "2026-09-30T23:02:28", "step": "model_request_started", "messages": 24}
+{"time": "2026-09-30T23:02:33", "step": "model_response_received", "duration_ms": 4741, "tool_calls": 1}
+{"time": "2026-09-30T23:02:33", "step": "tool_requested", "tool": "trace_action", "arguments": {"action": "describe_table", "reason": "Inspect orders table columns to see if any count column exists"}}
+{"time": "2026-09-30T23:02:33", "step": "llm_decision", "action": "describe_table", "reason": "Inspect orders table columns to see if any count column exists"}
+{"time": "2026-09-30T23:02:33", "step": "tool_completed", "tool": "trace_action", "duration_ms": 1}
+{"time": "2026-09-30T23:02:33", "step": "model_request_started", "messages": 26}
+{"time": "2026-09-30T23:02:34", "step": "model_response_received", "duration_ms": 903, "tool_calls": 1}
+{"time": "2026-09-30T23:02:34", "step": "tool_requested", "tool": "describe_table", "arguments": {"table": "orders", "schema": "demo"}}
+{"time": "2026-09-30T23:02:34", "step": "postgres_query_started"}
+{"time": "2026-09-30T23:02:34", "step": "postgres_query_completed", "rows": 6}
+{"time": "2026-09-30T23:02:34", "step": "postgres_query_started"}
+{"time": "2026-09-30T23:02:34", "step": "postgres_query_completed", "rows": 0}
+{"time": "2026-09-30T23:02:34", "step": "postgres_query_started"}
+{"time": "2026-09-30T23:02:34", "step": "postgres_query_completed", "rows": 0}
+{"time": "2026-09-30T23:02:34", "step": "tool_completed", "tool": "describe_table", "duration_ms": 160}
+{"time": "2026-09-30T23:02:34", "step": "model_request_started", "messages": 28}
+{"time": "2026-09-30T23:02:49", "step": "model_response_received", "duration_ms": 14784, "tool_calls": 0}
+{"time": "2026-09-30T23:02:49", "step": "agent_response_completed", "length": 671}
+{"time": "2026-09-30T23:05:24", "step": "agent_started"}
+{"time": "2026-09-30T23:05:33", "step": "user_input_received", "length": 35}
+{"time": "2026-09-30T23:05:33", "step": "model_request_started", "messages": 2}
+{"time": "2026-09-30T23:05:35", "step": "model_response_received", "duration_ms": 1840, "tool_calls": 1}
+{"time": "2026-09-30T23:05:35", "step": "tool_requested", "tool": "trace_action", "arguments": {"reason": "Check if demo schema exists", "action": "list_schemas"}}
+{"time": "2026-09-30T23:05:35", "step": "llm_decision", "action": "list_schemas", "reason": "Check if demo schema exists"}
+{"time": "2026-09-30T23:05:35", "step": "tool_completed", "tool": "trace_action", "duration_ms": 0}
+{"time": "2026-09-30T23:05:35", "step": "model_request_started", "messages": 4}
+{"time": "2026-09-30T23:05:48", "step": "agent_started"}
+{"time": "2026-09-30T23:05:50", "step": "user_input_received", "length": 35}
+{"time": "2026-09-30T23:05:50", "step": "model_request_started", "messages": 2}
+{"time": "2026-09-30T23:05:57", "step": "model_response_received", "duration_ms": 6573, "tool_calls": 1}
+{"time": "2026-09-30T23:05:57", "step": "tool_requested", "tool": "trace_action", "arguments": {"action": "list_schemas", "reason": "Check available schemas to confirm demo schema exists"}}
+{"time": "2026-09-30T23:05:57", "step": "llm_decision", "action": "list_schemas", "reason": "Check available schemas to confirm demo schema exists"}
+{"time": "2026-09-30T23:05:57", "step": "tool_completed", "tool": "trace_action", "duration_ms": 0}
+{"time": "2026-09-30T23:05:57", "step": "model_request_started", "messages": 4}
+{"time": "2026-09-30T23:05:59", "step": "model_response_received", "duration_ms": 2449, "tool_calls": 1}
+{"time": "2026-09-30T23:05:59", "step": "tool_requested", "tool": "list_schemas", "arguments": {}}
+{"time": "2026-09-30T23:05:59", "step": "postgres_query_started", "sql_length": 184, "timeout_seconds": 30}
+{"time": "2026-09-30T23:06:00", "step": "postgres_query_completed", "rows": 2}
+{"time": "2026-09-30T23:06:00", "step": "tool_completed", "tool": "list_schemas", "duration_ms": 325}
+{"time": "2026-09-30T23:06:00", "step": "model_request_started", "messages": 6}
+{"time": "2026-09-30T23:06:01", "step": "model_response_received", "duration_ms": 1778, "tool_calls": 1}
+{"time": "2026-09-30T23:06:01", "step": "tool_requested", "tool": "trace_action", "arguments": {"action": "list_tables", "reason": "List tables in demo schema to confirm orders table exists"}}
+{"time": "2026-09-30T23:06:01", "step": "llm_decision", "action": "list_tables", "reason": "List tables in demo schema to confirm orders table exists"}
+{"time": "2026-09-30T23:06:01", "step": "tool_completed", "tool": "trace_action", "duration_ms": 0}
+{"time": "2026-09-30T23:06:01", "step": "model_request_started", "messages": 8}
+{"time": "2026-09-30T23:06:03", "step": "model_response_received", "duration_ms": 1558, "tool_calls": 1}
+{"time": "2026-09-30T23:06:03", "step": "tool_requested", "tool": "list_tables", "arguments": {"schema": "demo"}}
+{"time": "2026-09-30T23:06:03", "step": "postgres_query_started", "sql_length": 283, "timeout_seconds": 30}
+{"time": "2026-09-30T23:06:03", "step": "postgres_query_completed", "rows": 2}
+{"time": "2026-09-30T23:06:03", "step": "tool_completed", "tool": "list_tables", "duration_ms": 68}
+{"time": "2026-09-30T23:06:03", "step": "model_request_started", "messages": 10}
+{"time": "2026-09-30T23:06:05", "step": "model_response_received", "duration_ms": 1509, "tool_calls": 1}
+{"time": "2026-09-30T23:06:05", "step": "tool_requested", "tool": "trace_action", "arguments": {"reason": "Count rows in demo.orders table", "action": "run_read_only_query"}}
+{"time": "2026-09-30T23:06:05", "step": "llm_decision", "action": "run_read_only_query", "reason": "Count rows in demo.orders table"}
+{"time": "2026-09-30T23:06:05", "step": "tool_completed", "tool": "trace_action", "duration_ms": 1}
+{"time": "2026-09-30T23:06:05", "step": "model_request_started", "messages": 12}
+{"time": "2026-09-30T23:06:07", "step": "model_response_received", "duration_ms": 2263, "tool_calls": 1}
+{"time": "2026-09-30T23:06:07", "step": "tool_requested", "tool": "run_read_only_query", "arguments": {"sql": "SELECT count(*) AS order_count FROM demo.orders"}}
+{"time": "2026-09-30T23:06:07", "step": "read_only_query_validated", "sql_length": 47, "max_rows": 200}
+{"time": "2026-09-30T23:06:07", "step": "postgres_query_started", "sql_length": 89, "timeout_seconds": 10}
+{"time": "2026-09-30T23:06:07", "step": "postgres_query_completed", "rows": 1}
+{"time": "2026-09-30T23:06:07", "step": "tool_completed", "tool": "run_read_only_query", "duration_ms": 58}
+{"time": "2026-09-30T23:06:07", "step": "model_request_started", "messages": 14}
+{"time": "2026-09-30T23:06:09", "step": "model_response_received", "duration_ms": 1915, "tool_calls": 0}
+{"time": "2026-09-30T23:06:09", "step": "agent_response_completed", "length": 50}

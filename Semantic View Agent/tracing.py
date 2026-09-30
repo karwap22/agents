@@ -10,4 +10,4 @@ def trace(step, **details):
     event = {"time": datetime.now().isoformat(timespec="seconds"), "step": step, **details}
     with TRACE_FILE.open("a", encoding="utf-8") as file:
         file.write(json.dumps(event) + "\n")
-    print(f"[trace] {step}")
+    print(f"[trace] {step}" + (f" {json.dumps(details)}" if details else ""))
