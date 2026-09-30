@@ -9,12 +9,15 @@ load_dotenv()
 MODEL = "nvidia/nemotron-3-super-120b-a12b"
 
 
-def call_model(messages, temperature=0.2, max_tokens=2048):
+def get_client():
     api_key = getenv("API")
     if not api_key:
         raise ValueError("Set API in .env to your NVIDIA API key.")
-    client = OpenAI(base_url="https://integrate.api.nvidia.com/v1", api_key=api_key)
-    completion = client.chat.completions.create(
+    return OpenAI(base_url="https://integrate.api.nvidia.com/v1", api_key=api_key)
+
+
+def call_model(messages, temperature=0.2, max_tokens=2048):
+    completion = get_client().chat.completions.create(
         model=MODEL,
         messages=messages,
         temperature=temperature,
