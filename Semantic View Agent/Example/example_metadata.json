@@ -1,0 +1,26 @@
+{
+  "warehouse": "analytics",
+  "tables": [
+    {
+      "name": "raw.orders",
+      "description": "Orders received from the checkout application.",
+      "columns": [
+        {"name": "order_id", "type": "string", "description": "Order identifier"},
+        {"name": "customer_id", "type": "string"},
+        {"name": "created_at", "type": "timestamp"},
+        {"name": "status", "type": "string", "sample_values": ["paid", "refunded"]},
+        {"name": "subtotal_cents", "type": "integer"},
+        {"name": "discount_cents", "type": "integer"}
+      ]
+    },
+    {
+      "name": "raw.customers",
+      "columns": [
+        {"name": "customer_id", "type": "string"},
+        {"name": "email", "type": "string", "sensitive": true},
+        {"name": "country", "type": "string"},
+        {"name": "created_at", "type": "timestamp"}
+      ]
+    }
+  ]
+}

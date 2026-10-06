@@ -1,0 +1,90 @@
+{
+  "semantic_views": [
+    {
+      "name": "orders",
+      "source_table": "raw.orders",
+      "description": "Semantic view of customer orders, including derived monetary amounts and customer attributes via join to raw.customers.",
+      "grain": "one row per order",
+      "primary_key": "order_id",
+      "dimensions": [
+        {
+          "name": "order_id",
+          "source_column": "order_id",
+          "description": "Unique identifier for the order.",
+          "confidence": "high"
+        },
+        {
+          "name": "customer_id",
+          "source_column": "customer_id",
+          "description": "Identifier of the customer who placed the order.",
+          "confidence": "high"
+        },
+        {
+          "name": "order_date",
+          "source_column": "created_at",
+          "description": "Timestamp when the order was created.",
+          "confidence": "high"
+        },
+        {
+          "name": "order_status",
+          "source_column": "status",
+          "description": "Current status of the order (e.g., paid, refunded).",
+          "confidence": "high"
+        },
+        {
+          "name": "customer_country",
+          "source_column": "country",
+          "description": "Country of the customer, joined from raw.customers.",
+          "confidence": "medium"
+        }
+      ],
+      "measures": [
+        {
+          "name": "subtotal_cents",
+          "source_column": "subtotal_cents",
+          "description": "Order subtotal in cents before discounts.",
+          "confidence": "high"
+        },
+        {
+          "name": "discount_cents",
+          "source_column": "discount_cents",
+          "description": "Discount applied to the order in cents.",
+          "confidence": "high"
+        },
+        {
+          "name": "net_amount_cents",
+          "expression": "subtotal_cents - discount_cents",
+          "description": "Final order amount after discount, in cents.",
+          "confidence": "medium"
+        },
+        {
+          "name": "order_count",
+          "expression": "COUNT(*)",
+          "description": "Number of orders (useful for aggregation).",
+          "confidence": "high"
+        }
+      ],
+      "joins": [
+        {
+          "target": "raw.customers",
+          "condition": "orders.customer_id = customers.customer_id",
+          "relationship": "many-to-one",
+          "confidence": "high"
+        }
+      ],
+      "assumptions": [
+        "Discount is always subtracted from subtotal to derive net amount.",
+        "The currency represented by cents is consistent across subtotal_cents and discount_cents (e.g., USD).",
+        "Order status values 'paid' and 'refunded' are the only relevant statuses for revenue calculations.",
+        "The created_at timestamp is in UTC or a consistent timezone; no conversion is needed for date-based analysis."
+      ],
+      "questions": [
+        "Should refunded orders be excluded from revenue metrics, or treated as negative amounts?",
+        "Is there a need to convert cents to a decimal currency representation (e.g., dollars) in the view?",
+        "Are there any additional order-level attributes (e.g., tax, shipping) that should be incorporated?",
+        "What is the expected handling of null or zero values in discount_cents and subtotal_cents?",
+        "Is the customer country column reliable for all customers, or are there missing values that need default handling?"
+      ]
+    }
+  ]
+}
