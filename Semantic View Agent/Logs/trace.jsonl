@@ -221,3 +221,33 @@
 {"time": "2026-09-30T23:06:07", "step": "model_request_started", "messages": 14}
 {"time": "2026-09-30T23:06:09", "step": "model_response_received", "duration_ms": 1915, "tool_calls": 0}
 {"time": "2026-09-30T23:06:09", "step": "agent_response_completed", "length": 50}
+{"time": "2026-10-06T20:46:01", "step": "tracing_enabled"}
+{"time": "2026-10-06T20:46:01", "step": "tracing_disabled"}
+{"time": "2026-10-06T20:51:50", "step": "tracing_enabled"}
+{"time": "2026-10-06T20:52:11", "step": "user_input_received", "length": 17}
+{"time": "2026-10-06T20:52:11", "step": "model_request_started", "messages": 14}
+{"time": "2026-10-06T20:52:14", "step": "model_response_received", "duration_ms": 3467, "tool_calls": 1}
+{"time": "2026-10-06T20:52:14", "step": "tool_requested", "tool": "trace_action", "arguments": {"action": "list_tables", "reason": "List tables in demo schema to confirm available tables"}}
+{"time": "2026-10-06T20:52:14", "step": "llm_decision", "action": "list_tables", "reason": "List tables in demo schema to confirm available tables"}
+{"time": "2026-10-06T20:52:14", "step": "tool_completed", "tool": "trace_action", "duration_ms": 0}
+{"time": "2026-10-06T20:52:14", "step": "model_request_started", "messages": 16}
+{"time": "2026-10-06T20:52:15", "step": "model_response_received", "duration_ms": 595, "tool_calls": 1}
+{"time": "2026-10-06T20:52:15", "step": "tool_requested", "tool": "list_tables", "arguments": {"schema": "demo"}}
+{"time": "2026-10-06T20:52:15", "step": "postgres_query_started", "sql_length": 283, "timeout_seconds": 30}
+{"time": "2026-10-06T20:52:15", "step": "postgres_query_completed", "rows": 2}
+{"time": "2026-10-06T20:52:15", "step": "tool_completed", "tool": "list_tables", "duration_ms": 179}
+{"time": "2026-10-06T20:52:15", "step": "model_request_started", "messages": 18}
+{"time": "2026-10-06T20:52:21", "step": "model_response_received", "duration_ms": 6140, "tool_calls": 1}
+{"time": "2026-10-06T20:52:21", "step": "tool_requested", "tool": "trace_action", "arguments": {"action": "list_tables", "reason": "List tables in public schema to confirm no tables"}}
+{"time": "2026-10-06T20:52:21", "step": "llm_decision", "action": "list_tables", "reason": "List tables in public schema to confirm no tables"}
+{"time": "2026-10-06T20:52:21", "step": "tool_completed", "tool": "trace_action", "duration_ms": 0}
+{"time": "2026-10-06T20:52:21", "step": "model_request_started", "messages": 20}
+{"time": "2026-10-06T20:52:22", "step": "model_response_received", "duration_ms": 797, "tool_calls": 1}
+{"time": "2026-10-06T20:52:22", "step": "tool_requested", "tool": "list_tables", "arguments": {"schema": "public"}}
+{"time": "2026-10-06T20:52:22", "step": "postgres_query_started", "sql_length": 285, "timeout_seconds": 30}
+{"time": "2026-10-06T20:52:22", "step": "postgres_query_completed", "rows": 0}
+{"time": "2026-10-06T20:52:22", "step": "tool_completed", "tool": "list_tables", "duration_ms": 69}
+{"time": "2026-10-06T20:52:22", "step": "model_request_started", "messages": 22}
+{"time": "2026-10-06T20:52:24", "step": "model_response_received", "duration_ms": 2140, "tool_calls": 0}
+{"time": "2026-10-06T20:52:24", "step": "agent_response_completed", "length": 342}
+{"time": "2026-10-06T20:52:38", "step": "tracing_disabled"}

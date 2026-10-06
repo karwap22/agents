@@ -1,21 +1,12 @@
 import json
 import time
 
-from llm import MODEL, call_model, get_client
+from llm import call_model, chat_completion
 from postgres import describe_table, list_schemas, list_tables, run_read_only_query
-from tracing import trace
+from tracing import is_enabled, set_enabled, trace
+from tools import TOOLS
+from prompts import SEMANTIC_PROMPT,AGENT_PROMPT,TRACE_PROMPT
 
-
-SEMANTIC_PROMPT = """You are a careful analytics engineer. Create reviewable semantic-view proposals from supplied PostgreSQL metadata. Do not invent business rules: list uncertain assumptions and questions. Return JSON only with a semantic_views array. Each view needs name, source_table, description, grain, primary_key, dimensions, measures, joins, assumptions, and questions."""
-
-TOOLS = [
-    {"type": "function", "function": {"name": "trace_action", "description": "Record a short public reason for the next action. Use before every database or semantic-generation tool; do not include private chain-of-thought.", "parameters": {"type": "object", "properties": {"action": {"type": "string"}, "reason": {"type": "string"}}, "required": ["action", "reason"]}}},
-    {"type": "function", "function": {"name": "list_schemas", "description": "List available PostgreSQL schemas.", "parameters": {"type": "object", "properties": {}}}},
-    {"type": "function", "function": {"name": "list_tables", "description": "List base tables in a PostgreSQL schema.", "parameters": {"type": "object", "properties": {"schema": {"type": "string"}}, "required": ["schema"]}}},
-    {"type": "function", "function": {"name": "describe_table", "description": "Show columns, primary key, and foreign keys for one PostgreSQL table.", "parameters": {"type": "object", "properties": {"schema": {"type": "string"}, "table": {"type": "string"}}, "required": ["schema", "table"]}}},
-    {"type": "function", "function": {"name": "run_read_only_query", "description": "Run one read-only SELECT or WITH query. Use for questions about data, counts, sums, trends, and grouped results. Results are limited to 200 rows and time out after 10 seconds.", "parameters": {"type": "object", "properties": {"sql": {"type": "string", "description": "A single PostgreSQL SELECT or WITH query."}}, "required": ["sql"]}}},
-    {"type": "function", "function": {"name": "create_semantic_view", "description": "Create a semantic-view proposal for selected PostgreSQL tables.", "parameters": {"type": "object", "properties": {"schema": {"type": "string"}, "tables": {"type": "array", "items": {"type": "string"}}, "request": {"type": "string"}}, "required": ["schema", "tables", "request"]}}},
-]
 
 
 def trace_action(action, reason):
@@ -39,14 +30,29 @@ TOOL_MAP = {"trace_action": trace_action, "list_schemas": list_schemas, "list_ta
 
 
 def main():
-    messages = [{"role": "system", "content": "You are a semantic-view assistant for PostgreSQL. Use tools to inspect the database before answering database questions. Use run_read_only_query for questions requiring actual row data or aggregates. Never claim a table, column, relationship, or query result exists unless a tool result confirms it. Before every database or semantic-generation tool call, call trace_action once with a concise public reason for the action. Do not reveal private chain-of-thought."}]
-    print("Semantic View Agent (type exit to quit)")
+    messages = [{"role": "system", "content": AGENT_PROMPT}]
+    print("Semantic View Agent (type exit to quit; /trace on for debugging)")
     trace("agent_started")
     while True:
         prompt = input("You: ").strip()
-        if prompt.lower() in {"exit", "quit"}:
+        if prompt.lower() in {"exit", "quit","/exit", "/quit"}:
             trace("agent_stopped")
             return
+        if prompt == "/trace on":
+            set_enabled(True)
+            messages[0]["content"] = AGENT_PROMPT + TRACE_PROMPT
+            print("Tracing enabled.\n")
+            trace("tracing_enabled")
+            continue
+        if prompt == "/trace off":
+            trace("tracing_disabled")
+            set_enabled(False)
+            messages[0]["content"] = AGENT_PROMPT
+            print("Tracing disabled.\n")
+            continue
+        if prompt == "/trace status":
+            print(f"Tracing is {'on' if is_enabled() else 'off'}.\n")
+            continue
         if not prompt:
             continue
         messages.append({"role": "user", "content": prompt})
@@ -54,7 +60,8 @@ def main():
         while True:
             trace("model_request_started", messages=len(messages))
             started = time.perf_counter()
-            response = get_client().chat.completions.create(model=MODEL, messages=messages, tools=TOOLS, tool_choice="auto")
+            tools = TOOLS if is_enabled() else [tool for tool in TOOLS if tool["function"]["name"] != "trace_action"]
+            response = chat_completion(messages, tools=tools, tool_choice="auto")
             message = response.choices[0].message
             trace("model_response_received", duration_ms=round((time.perf_counter() - started) * 1000), tool_calls=len(message.tool_calls or []))
             if not message.tool_calls:

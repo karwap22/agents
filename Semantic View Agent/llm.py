@@ -16,11 +16,20 @@ def get_client():
     return OpenAI(base_url="https://integrate.api.nvidia.com/v1", api_key=api_key)
 
 
+def chat_completion(messages, temperature=0.2, max_tokens=2048, tools=None, tool_choice=None):
+    options = {
+        "model": MODEL,
+        "messages": messages,
+        "temperature": temperature,
+        "max_tokens": max_tokens,
+    }
+    if tools is not None:
+        options["tools"] = tools
+    if tool_choice is not None:
+        options["tool_choice"] = tool_choice
+    return get_client().chat.completions.create(**options)
+
+
 def call_model(messages, temperature=0.2, max_tokens=2048):
-    completion = get_client().chat.completions.create(
-        model=MODEL,
-        messages=messages,
-        temperature=temperature,
-        max_tokens=max_tokens,
-    )
+    completion = chat_completion(messages, temperature, max_tokens)
     return completion.choices[0].message.content or ""
