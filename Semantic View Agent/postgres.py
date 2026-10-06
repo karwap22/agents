@@ -154,6 +154,7 @@ def run_read_only_query(sql):
     return {"columns": columns, "rows": rows[:MAX_ROWS], "row_count": min(len(rows), MAX_ROWS), "truncated": truncated, "max_rows": MAX_ROWS}
 
 
+@lru_cache(maxsize=1)
 def list_schemas():
     return query("""
         SELECT schema_name
@@ -163,6 +164,7 @@ def list_schemas():
     """)
 
 
+@lru_cache(maxsize=64)
 def list_tables(schema):
     return query(f"""
         SELECT table_name, COALESCE(obj_description((quote_ident(table_schema) || '.' || quote_ident(table_name))::regclass), '') AS description
@@ -172,6 +174,7 @@ def list_tables(schema):
     """)
 
 
+@lru_cache(maxsize=512)
 def describe_table(schema, table):
     columns = query(f"""
         SELECT column_name AS name, data_type AS type, is_nullable = 'YES' AS nullable,
@@ -198,3 +201,17 @@ def describe_table(schema, table):
         ORDER BY kcu.ordinal_position
     """)
     return {"name": f"{schema}.{table}", "columns": columns, "primary_key": [key["column_name"] for key in primary_key], "foreign_keys": foreign_keys}
+
+
+def metadata_cache_stats():
+    return {
+        "schemas": list_schemas.cache_info()._asdict(),
+        "tables": list_tables.cache_info()._asdict(),
+        "descriptions": describe_table.cache_info()._asdict(),
+    }
+
+
+def clear_metadata_cache():
+    list_schemas.cache_clear()
+    list_tables.cache_clear()
+    describe_table.cache_clear()

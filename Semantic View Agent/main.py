@@ -2,7 +2,7 @@ import json
 import time
 
 from llm import call_model, chat_completion
-from postgres import describe_table, list_schemas, list_tables, run_read_only_query,pool_stats
+from postgres import describe_table, list_schemas, list_tables, run_read_only_query,pool_stats, clear_metadata_cache,metadata_cache_stats
 from tracing import is_enabled, set_enabled, trace
 from tools import TOOLS
 from prompts import SEMANTIC_PROMPT,AGENT_PROMPT,TRACE_PROMPT
@@ -41,6 +41,37 @@ def create_semantic_view(schema, tables, request):
 
 TOOL_MAP = {"trace_action": trace_action, "list_schemas": list_schemas, "list_tables": list_tables, "describe_table": describe_table, "run_read_only_query": run_read_only_query, "create_semantic_view": create_semantic_view}
 
+def run_agent_turn(messages, prompt):
+    messages.append({"role": "user", "content": prompt})
+    trace("user_input_received", length=len(prompt))
+    while True:
+        trace("model_request_started", messages=len(messages))
+        started = time.perf_counter()
+        tools = TOOLS if is_enabled() else [tool for tool in TOOLS if tool["function"]["name"] != "trace_action"]
+        response = chat_completion(messages, tools=tools, tool_choice="auto")
+        message = response.choices[0].message
+        trace("model_response_received", duration_ms=round((time.perf_counter() - started) * 1000), tool_calls=len(message.tool_calls or []))
+        if not message.tool_calls:
+            answer = message.content or ""
+            messages.append(message)
+            messages = trim_history(messages)
+            trace("agent_response_completed", length=len(answer))
+            return answer, messages
+        messages.append(message)
+        for tool_call in message.tool_calls:
+            try:
+                arguments = json.loads(tool_call.function.arguments)
+                trace("tool_requested", tool=tool_call.function.name, arguments=arguments)
+                started = time.perf_counter()
+                result = TOOL_MAP[tool_call.function.name](**arguments)
+            except (KeyError, TypeError, ValueError, json.JSONDecodeError) as error:
+                result = {"error": str(error)}
+                trace("tool_failed", tool=tool_call.function.name, error=str(error))
+            else:
+                trace("tool_completed", tool=tool_call.function.name, duration_ms=round((time.perf_counter() - started) * 1000))
+            messages.append({"role": "tool", "tool_call_id": tool_call.id, "content": json.dumps(result,default=str)})
+
+
 
 def main():
     messages = [{"role": "system", "content": AGENT_PROMPT}]
@@ -53,7 +84,14 @@ def main():
             return
         if prompt == "/pool status":
             print(json.dumps(pool_stats(),indent=2))
-            continue                
+            continue              
+        if prompt == "/cache status":
+            print(json.dumps(metadata_cache_stats(), indent=2))
+            continue
+        if prompt == "/cache clear":
+            clear_metadata_cache()
+            print("Metadata cache cleared.\n")
+            continue  
         if prompt == "/trace on":
             set_enabled(True)
             messages[0]["content"] = AGENT_PROMPT + TRACE_PROMPT
@@ -71,34 +109,8 @@ def main():
             continue
         if not prompt:
             continue
-        messages.append({"role": "user", "content": prompt})
-        trace("user_input_received", length=len(prompt))
-        while True:
-            trace("model_request_started", messages=len(messages))
-            started = time.perf_counter()
-            tools = TOOLS if is_enabled() else [tool for tool in TOOLS if tool["function"]["name"] != "trace_action"]
-            response = chat_completion(messages, tools=tools, tool_choice="auto")
-            message = response.choices[0].message
-            trace("model_response_received", duration_ms=round((time.perf_counter() - started) * 1000), tool_calls=len(message.tool_calls or []))
-            if not message.tool_calls:
-                print(f"Agent: {message.content}\n")
-                messages.append(message)
-                messages = trim_history(messages)
-                trace("agent_response_completed", length=len(message.content or ""))
-                break
-            messages.append(message)
-            for tool_call in message.tool_calls:
-                try:
-                    arguments = json.loads(tool_call.function.arguments)
-                    trace("tool_requested", tool=tool_call.function.name, arguments=arguments)
-                    started = time.perf_counter()
-                    result = TOOL_MAP[tool_call.function.name](**arguments)
-                except (KeyError, TypeError, ValueError, json.JSONDecodeError) as error:
-                    result = {"error": str(error)}
-                    trace("tool_failed", tool=tool_call.function.name, error=str(error))
-                else:
-                    trace("tool_completed", tool=tool_call.function.name, duration_ms=round((time.perf_counter() - started) * 1000))
-                messages.append({"role": "tool", "tool_call_id": tool_call.id, "content": json.dumps(result,default=str)})
+        answer, messages = run_agent_turn(messages, prompt)
+        print(f"Agent: {answer}\n")
 
 
 if __name__ == "__main__":
