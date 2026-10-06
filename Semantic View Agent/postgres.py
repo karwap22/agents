@@ -1,11 +1,11 @@
 """PostgreSQL metadata and guarded read-only query tools."""
 
-import csv
-import io
 import os
 import re
-import shutil
-import subprocess
+import psycopg
+from psycopg.rows import dict_row
+from functools import lru_cache
+from psycopg_pool import ConnectionPool, PoolTimeout
 
 from dotenv import load_dotenv
 from tracing import trace
@@ -30,30 +30,58 @@ def database_url():
         raise ValueError("Set DATABASE_URL in .env to a PostgreSQL connection URL.")
     return url
 
+@lru_cache(maxsize=1)
+def get_pool():
+    return ConnectionPool(
+        conninfo=database_url(),
+        min_size=1,
+        max_size=10,
+        timeout=5,
+        open=True,
+        kwargs={
+            "autocommit": True,
+            "row_factory": dict_row,
+            "options": "-c default_transaction_read_only=on",
+        },
+    )
 
-def csv_query(sql, timeout=30):
-    if not shutil.which("psql"):
-        raise ValueError("psql is required but was not found on PATH.")
-    trace("postgres_query_started", sql_length=len(sql), timeout_seconds=timeout)
-    environment = os.environ.copy()
-    environment["PGOPTIONS"] = f"-c default_transaction_read_only=on -c statement_timeout={timeout * 1000}"
+def pool_stats():
+    return get_pool().get_stats()
+
+def database_query(sql, timeout=30):
+    trace(
+        "postgres_query_started",
+        sql_length=len(sql),
+        timeout_seconds=timeout,
+    )
+
     try:
-        result = subprocess.run(
-            ["psql", database_url(), "--csv", "-v", "ON_ERROR_STOP=1", "-c", sql],
-            check=True, capture_output=True, text=True, timeout=timeout + 2, env=environment,
-        )
-    except subprocess.CalledProcessError as error:
-        raise ValueError(error.stderr.strip() or "PostgreSQL query failed.") from error
-    except subprocess.TimeoutExpired as error:
-        raise ValueError("PostgreSQL query timed out.") from error
-    reader = csv.DictReader(io.StringIO(result.stdout))
-    rows = list(reader)
-    trace("postgres_query_completed", rows=len(rows))
-    return reader.fieldnames or [], rows
+        with get_pool().connection() as connection:
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    "SELECT set_config('statement_timeout', %s, false)",
+                    (str(timeout * 1000),),
+                )
+                cursor.execute(sql)
 
+                columns = (
+                    [column.name for column in cursor.description]
+                    if cursor.description
+                    else []
+                )
+                rows = cursor.fetchall() if cursor.description else []
+    except PoolTimeout as error:
+        raise ValueError("Database connection pool is busy.") from error
+    except psycopg.errors.QueryCanceled as error:
+        raise ValueError("PostgreSQL query timed out.") from error
+    except psycopg.Error as error:
+        raise ValueError(str(error).strip() or "PostgreSQL query failed.") from error
+
+    trace("postgres_query_completed", rows=len(rows))
+    return columns, rows
 
 def query(sql):
-    return csv_query(sql)[1]
+    return database_query(sql)[1]
 
 
 def literal(value):
@@ -121,7 +149,7 @@ def validate_read_only_sql(sql):
 def run_read_only_query(sql):
     sql = validate_read_only_sql(sql)
     trace("read_only_query_validated", sql_length=len(sql), max_rows=MAX_ROWS)
-    columns, rows = csv_query(f"SELECT * FROM ({sql}) AS agent_result LIMIT {MAX_ROWS + 1}", QUERY_TIMEOUT_SECONDS)
+    columns, rows = database_query(f"SELECT * FROM ({sql}) AS agent_result LIMIT {MAX_ROWS + 1}", QUERY_TIMEOUT_SECONDS)
     truncated = len(rows) > MAX_ROWS
     return {"columns": columns, "rows": rows[:MAX_ROWS], "row_count": min(len(rows), MAX_ROWS), "truncated": truncated, "max_rows": MAX_ROWS}
 

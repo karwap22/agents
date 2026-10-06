@@ -1,5 +1,5 @@
 from os import getenv
-
+from functools import lru_cache
 from dotenv import load_dotenv
 from openai import OpenAI
 
@@ -8,7 +8,7 @@ load_dotenv()
 
 MODEL = "nvidia/nemotron-3-super-120b-a12b"
 
-
+@lru_cache(maxsize=1)
 def get_client():
     api_key = getenv("API")
     if not api_key:

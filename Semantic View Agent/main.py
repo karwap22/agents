@@ -2,16 +2,29 @@ import json
 import time
 
 from llm import call_model, chat_completion
-from postgres import describe_table, list_schemas, list_tables, run_read_only_query
+from postgres import describe_table, list_schemas, list_tables, run_read_only_query,pool_stats
 from tracing import is_enabled, set_enabled, trace
 from tools import TOOLS
 from prompts import SEMANTIC_PROMPT,AGENT_PROMPT,TRACE_PROMPT
 
-
+MAX_TURNS = 6
 
 def trace_action(action, reason):
     trace("llm_decision", action=action, reason=reason)
     return {"recorded": True}
+
+def trim_history(messages):
+    user_indexes = [
+        index
+        for index, message in enumerate(messages)
+        if isinstance(message, dict) and message.get("role") == "user"
+    ]
+
+    if len(user_indexes) <= MAX_TURNS:
+        return messages
+
+    cutoff = user_indexes[-MAX_TURNS]
+    return [messages[0], *messages[cutoff:]]
 
 
 def create_semantic_view(schema, tables, request):
@@ -38,6 +51,9 @@ def main():
         if prompt.lower() in {"exit", "quit","/exit", "/quit"}:
             trace("agent_stopped")
             return
+        if prompt == "/pool status":
+            print(json.dumps(pool_stats(),indent=2))
+            continue                
         if prompt == "/trace on":
             set_enabled(True)
             messages[0]["content"] = AGENT_PROMPT + TRACE_PROMPT
@@ -67,6 +83,7 @@ def main():
             if not message.tool_calls:
                 print(f"Agent: {message.content}\n")
                 messages.append(message)
+                messages = trim_history(messages)
                 trace("agent_response_completed", length=len(message.content or ""))
                 break
             messages.append(message)
@@ -81,7 +98,7 @@ def main():
                     trace("tool_failed", tool=tool_call.function.name, error=str(error))
                 else:
                     trace("tool_completed", tool=tool_call.function.name, duration_ms=round((time.perf_counter() - started) * 1000))
-                messages.append({"role": "tool", "tool_call_id": tool_call.id, "content": json.dumps(result)})
+                messages.append({"role": "tool", "tool_call_id": tool_call.id, "content": json.dumps(result,default=str)})
 
 
 if __name__ == "__main__":
